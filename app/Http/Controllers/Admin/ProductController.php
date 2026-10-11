@@ -11,11 +11,17 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function index()
-    {
-        $products = Product::with('category')->latest()->paginate(10);
-        return view('admin.products.index', compact('products'));
+    public function index(Request $request)
+{
+    $query = Product::with('category');
+    
+    if ($request->has('category') && $request->category != '') {
+        $query->where('category_id', $request->category);
     }
+    
+    $products = $query->latest()->paginate(10);
+    return view('admin.products.index', compact('products'));
+}
 
     public function create()
     {

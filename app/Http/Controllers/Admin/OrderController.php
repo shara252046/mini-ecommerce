@@ -20,6 +20,12 @@ class OrderController extends Controller
         $order->update(['status' => $request->status]);
         return redirect()->back()->with('success', 'Order status updated!');
     }
+
+    public function show($id)
+    {
+        $order = Order::with('items.product', 'user')->findOrFail($id);
+        return view('admin.orders.show', compact('order'));
+    }
 }
 
 ?>

@@ -13,7 +13,12 @@
         <div>
             <h1 class="text-3xl font-bold">{{ $product->name }}</h1>
             <p class="text-gray-600 mb-4">Category: {{ $product->category->name }}</p>
-            <p class="text-blue-600 font-bold text-3xl mb-4">${{ number_format($product->price, 2) }}</p>
+           <p class="text-blue-600 font-bold text-lg">
+    ৳{{ number_format($product->price, 2) }} / {{ $product->unit }}
+    @if($product->is_fresh)
+        <span class="text-green-600 text-sm">🌱 Fresh</span>
+    @endif
+</p>
             <p class="text-gray-700 mb-4">{{ $product->description }}</p>
             <p class="text-sm mb-4 {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600' }}">
                 {{ $product->stock > 0 ? 'In Stock: ' . $product->stock : 'Out of Stock' }}
