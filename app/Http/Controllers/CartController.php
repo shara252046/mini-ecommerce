@@ -18,19 +18,38 @@ class CartController extends Controller
     public function add($id)
     {
         $product = Product::findOrFail($id);
-        $cart = Cart::where('user_id', auth()->id())->where('product_id', $id)->first();
+
+        // Stock check
+        if ($product->stock <= 0) {
+            return redirect()->back()->with('error', 'Product is out of stock!');
+        }
+
+        $cart = Cart::where('user_id', auth()->id())
+            ->where('product_id', $id)
+            ->first();
+
         if ($cart) {
             $cart->increment('quantity');
         } else {
-            Cart::create(['user_id' => auth()->id(), 'product_id' => $id, 'quantity' => 1]);
+            Cart::create([
+                'user_id' => auth()->id(),
+                'product_id' => $id,
+                'quantity' => 1
+            ]);
         }
+
         return redirect()->back()->with('success', 'Product added to cart!');
     }
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'quantity' => 'required|integer|min:1'
+        ]);
+
         $cart = Cart::findOrFail($id);
         $cart->update(['quantity' => $request->quantity]);
+
         return redirect()->back()->with('success', 'Cart updated!');
     }
 
@@ -39,11 +58,6 @@ class CartController extends Controller
         Cart::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Item removed from cart!');
     }
-}minate\Http\Request;
-
-class CartController extends Controller
-{
-    //
 }
 
 ?>
