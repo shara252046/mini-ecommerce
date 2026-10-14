@@ -48,7 +48,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
 });
-
+Route::get('/help', function () {
+    return view('help');
+})->name('help');
+Route::view('/help', 'help')->name('help');
 require __DIR__.'/auth.php';
 
 ?>

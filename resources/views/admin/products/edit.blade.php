@@ -3,15 +3,24 @@
 @section('content')
 <div class="max-w-2xl mx-auto bg-white rounded shadow p-6">
     <h1 class="text-2xl font-bold mb-6">Edit Product: {{ $product->name }}</h1>
-    
+
+    @if($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('admin.products.update', $product->id) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
         <div class="mb-4">
             <label class="block mb-2 font-bold">Product Name</label>
-            <input type="text" name="name" value="{{ $product->name }}" class="w-full border rounded px-3 py-2" required>
-            @error('name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+            <input type="text" name="name" value="{{ old('name', $product->name) }}" class="w-full border rounded px-3 py-2" required>
         </div>
 
         <div class="mb-4">
@@ -28,7 +37,7 @@
         <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
                 <label class="block mb-2 font-bold">Price (৳)</label>
-                <input type="number" step="0.01" name="price" value="{{ $product->price }}" class="w-full border rounded px-3 py-2" required>
+                <input type="number" step="0.01" name="price" value="{{ old('price', $product->price) }}" class="w-full border rounded px-3 py-2" required>
             </div>
             <div>
                 <label class="block mb-2 font-bold">Unit</label>
@@ -43,46 +52,54 @@
         <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
                 <label class="block mb-2 font-bold">Stock</label>
-                <input type="number" name="stock" value="{{ $product->stock }}" class="w-full border rounded px-3 py-2" required>
+                <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" class="w-full border rounded px-3 py-2" required>
             </div>
             <div>
-                <label class="block mb-2 font-bold">Expiry Date</label>
-                <input type="date" name="expiry_date" value="{{ $product->expiry_date }}" class="w-full border rounded px-3 py-2">
+                <label class="block mb-2 font-bold">Expiry Date (Optional)</label>
+                <input type="date" name="expiry_date" value="{{ old('expiry_date', $product->expiry_date) }}" class="w-full border rounded px-3 py-2">
             </div>
         </div>
 
         <div class="mb-4">
             <label class="block mb-2 font-bold">Description</label>
-            <textarea name="description" rows="4" class="w-full border rounded px-3 py-2" required>{{ $product->description }}</textarea>
+            <textarea name="description" rows="4" class="w-full border rounded px-3 py-2" required>{{ old('description', $product->description) }}</textarea>
         </div>
 
         <div class="mb-4">
             <label class="flex items-center">
                 <input type="checkbox" name="is_fresh" value="1" {{ $product->is_fresh ? 'checked' : '' }} class="mr-2">
-                <span class="font-bold">Is Fresh? (মাছ/মাংস/সবজি)</span>
+                <span class="font-bold">Is Fresh?</span>
             </label>
         </div>
 
-        <!-- Image Field -->
-        <div class="mb-4">
-            <label class="block mb-2 font-bold">Product Image</label>
-            
-            @if($product->image)
-                <div class="mb-3">
-                    <p class="text-sm text-gray-600 mb-2">Current Image:</p>
-                    <img src="{{ asset('storage/' . $product->image) }}" 
-                         class="w-32 h-32 object-cover rounded border shadow">
-                </div>
-            @endif
+        <!-- Current Image Display -->
+        @if($product->image)
+            <div class="mb-4">
+                <p class="text-sm font-bold text-gray-700 mb-2">Current Image:</p>
+                <img src="{{ str_starts_with($product->image, 'http') ? $product->image : asset($product->image) }}" 
+                     class="w-32 h-32 object-cover rounded border shadow"
+                     onerror="this.src='https://via.placeholder.com/128?text=No+Image'">
+            </div>
+        @endif
 
+        <!-- File Upload -->
+        <div class="mb-4">
+            <label class="block mb-2 font-bold">Upload New Image</label>
             <input type="file" name="image" accept="image/*" 
                    class="w-full border rounded px-3 py-2 bg-gray-50">
-            <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG (Max: 2MB)</p>
-            @error('image') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+            <p class="text-xs text-gray-500 mt-1">JPG, PNG, WEBP (Max: 5MB)</p>
+        </div>
+
+        <!-- OR Image URL -->
+        <div class="mb-4">
+            <label class="block mb-2 font-bold">Or Provide an Image URL</label>
+            <input type="text" name="image_url" placeholder="https://example.com/image.jpg" 
+                   value="{{ old('image_url') }}"
+                   class="w-full border rounded px-3 py-2">
         </div>
 
         <div class="flex gap-2">
-            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-bold">
                 ✅ Update Product
             </button>
             <a href="{{ route('admin.products.index') }}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300">

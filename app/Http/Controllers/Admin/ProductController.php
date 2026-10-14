@@ -7,21 +7,18 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
-{
-    $query = Product::with('category');
-    
-    if ($request->has('category') && $request->category != '') {
-        $query->where('category_id', $request->category);
+    {
+        $query = Product::with('category');
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+        $products = $query->latest()->paginate(10);
+        return view('admin.products.index', compact('products'));
     }
-    
-    $products = $query->latest()->paginate(10);
-    return view('admin.products.index', compact('products'));
-}
 
     public function create()
     {
@@ -35,16 +32,31 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
+            'unit' => 'required|string|max:50',
             'stock' => 'required|integer|min:0',
             'description' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'is_fresh' => 'nullable|boolean',
+            'expiry_date' => 'nullable|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'image_url' => 'nullable|url',
         ]);
 
         $data = $request->all();
         $data['slug'] = Str::slug($request->name);
+        $data['is_fresh'] = $request->has('is_fresh') ? 1 : 0;
 
+        // File Upload - Save to public/products
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $file = $request->file('image');
+            $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('products'), $filename);
+            $data['image'] = 'products/' . $filename;
+        }
+        // Image URL
+        elseif ($request->filled('image_url')) {
+            $data['image'] = $request->image_url;
+        } else {
+            unset($data['image']);
         }
 
         Product::create($data);
@@ -63,17 +75,35 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
+            'unit' => 'required|string|max:50',
             'stock' => 'required|integer|min:0',
             'description' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'is_fresh' => 'nullable|boolean',
+            'expiry_date' => 'nullable|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'image_url' => 'nullable|url',
         ]);
 
         $data = $request->all();
         $data['slug'] = Str::slug($request->name);
+        $data['is_fresh'] = $request->has('is_fresh') ? 1 : 0;
 
+        // File Upload - Save to public/products
         if ($request->hasFile('image')) {
-            if ($product->image) Storage::disk('public')->delete($product->image);
-            $data['image'] = $request->file('image')->store('products', 'public');
+            // Delete old image if exists (not URL)
+            if ($product->image && !str_starts_with($product->image, 'http') && file_exists(public_path($product->image))) {
+                unlink(public_path($product->image));
+            }
+            $file = $request->file('image');
+            $filename = time() . '_' . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('products'), $filename);
+            $data['image'] = 'products/' . $filename;
+        }
+        // Image URL
+        elseif ($request->filled('image_url')) {
+            $data['image'] = $request->image_url;
+        } else {
+            unset($data['image']);
         }
 
         $product->update($data);
@@ -82,10 +112,10 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if ($product->image) Storage::disk('public')->delete($product->image);
+        if ($product->image && !str_starts_with($product->image, 'http') && file_exists(public_path($product->image))) {
+            unlink(public_path($product->image));
+        }
         $product->delete();
         return redirect()->route('admin.products.index')->with('success', 'Product deleted!');
     }
 }
-
-?>

@@ -5,7 +5,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
             @if($product->image)
-                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full rounded">
+                <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="w-full rounded">
             @else
                 <div class="w-full h-96 bg-gray-300 flex items-center justify-center rounded">No Image</div>
             @endif

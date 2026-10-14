@@ -14,33 +14,20 @@
     <h1 class="text-3xl font-bold">
         @php
             $icons = [
-                'Rice & Grains' => '🍚', 'Oil & Ghee' => '🛢️',
-                'Vegetables' => '🥬', 'Fruits' => '🍎',
-                'Dairy & Eggs' => '🥛', 'Meat & Fish' => '🐟',
-                'Spices' => '🧂', 'Bakery' => '🍞',
-                'Beverages' => '🥤', 'Snacks' => '🍫',
-                'Frozen' => '❄️', 'Household' => '🧴'
+                'Rice & Grains', 'Oil & Ghee',
+                'Vegetables', 'Fruits',
+                'Dairy & Eggs', 'Meat & Fish',
+                'Spices', 'Bakery',
+                'Beverages', 'Snacks',
+                'Frozen', 'Household'
             ];
         @endphp
-        {{ $icons[$category->name] ?? '🛍️' }} {{ $category->name }}
+        {{ $category->name }}
     </h1>
     <p class="mt-2">{{ $products->total() }} products available</p>
 </div>
 
-<!-- Other Categories Quick Links -->
-<div class="bg-white rounded shadow p-4 mb-6">
-    <h2 class="text-lg font-bold mb-3">Other Categories</h2>
-    <div class="flex flex-wrap gap-2">
-        @foreach($categories as $cat)
-            @if($cat->id != $category->id)
-                <a href="{{ route('category.show', $cat->slug) }}" 
-                   class="bg-gray-100 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">
-                    {{ $cat->name }}
-                </a>
-            @endif
-        @endforeach
-    </div>
-</div>
+
 
 <!-- Products Grid -->
 @if($products->count() > 0)
@@ -48,12 +35,12 @@
         @foreach($products as $product)
             <div class="bg-white rounded shadow hover:shadow-lg transition">
                 @if($product->image)
-                    <img src="{{ asset('storage/' . $product->image) }}" 
+                    <img src="{{ asset($product->image) }}" 
                          alt="{{ $product->name }}" 
                          class="w-full h-40 object-cover rounded-t">
                 @else
                     <div class="w-full h-40 bg-gray-200 flex items-center justify-center rounded-t text-5xl">
-                        {{ $icons[$category->name] ?? '🛍️' }}
+                        {{$category->name}}
                     </div>
                 @endif
                 <div class="p-3">

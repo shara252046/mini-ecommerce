@@ -33,7 +33,7 @@
                     <tr class="border-b hover:bg-gray-50">
                         <td class="py-3 px-4">
                             @if($product->image)
-                                <img src="{{ asset('storage/' . $product->image) }}" class="w-12 h-12 object-cover rounded">
+                                <img src="{{ asset($product->image) }}" class="w-12 h-12 object-cover rounded">
                             @else
                                 <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">🛍️</div>
                             @endif

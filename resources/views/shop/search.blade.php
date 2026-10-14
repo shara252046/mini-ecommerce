@@ -85,7 +85,7 @@
         @foreach($products as $product)
             <div class="bg-white rounded shadow hover:shadow-lg transition">
                 @if($product->image)
-                    <img src="{{ asset('storage/' . $product->image) }}" 
+                    <img src="{{ asset($product->image) }}" 
                          alt="{{ $product->name }}" 
                          class="w-full h-40 object-cover rounded-t">
                 @else
