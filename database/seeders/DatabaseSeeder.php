@@ -28,7 +28,12 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'is_admin' => 0,
         ]);
-
+user::create([
+    'name'=> 'dipty',
+    'email'=> 'dipty@gmail.com',
+    'password' => Hash::make('12345678'),
+    'is_admin' =>0,
+]);
         // ============ MAIN CATEGORIES ============
         $mainCategories = [
             'Rice & Grains', 'Oil & Ghee', 'Vegetables', 'Fruits',

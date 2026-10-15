@@ -2,58 +2,6 @@
 
 @section('content')
 
-<!-- Search Header -->
-<div class="mb-6">
-    <h1 class="text-3xl font-bold mb-2">🔍 Search Results</h1>
-    <p class="text-gray-600">
-        @if(request('search') || request('category') || request('min_price') || request('max_price'))
-            {{ $products->total() }} products found for your search
-        @else
-            Enter search terms to find products
-        @endif
-    </p>
-</div>
-
-<!-- Search Form -->
-<form method="GET" action="{{ route('search') }}" class="bg-white p-4 rounded shadow mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
-        <!-- Search Input -->
-        <input type="text" name="search" placeholder="🔍 Search products..." 
-               value="{{ request('search') }}" 
-               class="md:col-span-2 border rounded px-3 py-2 focus:outline-none focus:border-green-500">
-        
-        <!-- Category Filter -->
-        <select name="category" class="border rounded px-3 py-2 focus:outline-none focus:border-green-500">
-            <option value="">All Categories</option>
-            @foreach($categories as $cat)
-                <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
-                    {{ $cat->name }}
-                </option>
-            @endforeach
-        </select>
-        
-        <!-- Price Range -->
-        <div class="flex gap-2">
-            <input type="number" name="min_price" placeholder="Min ৳" 
-                   value="{{ request('min_price') }}" 
-                   class="w-1/2 border rounded px-3 py-2 focus:outline-none focus:border-green-500">
-            <input type="number" name="max_price" placeholder="Max ৳" 
-                   value="{{ request('max_price') }}" 
-                   class="w-1/2 border rounded px-3 py-2 focus:outline-none focus:border-green-500">
-        </div>
-    </div>
-
-    <div class="flex gap-2 flex-wrap">
-        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-            🔍 Search
-        </button>
-        @if(request('search') || request('category') || request('min_price') || request('max_price'))
-            <a href="{{ route('search') }}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300">
-                🔄 Reset Filters
-            </a>
-        @endif
-    </div>
-</form>
 
 <!-- Active Filters -->
 @if(request('search') || request('category') || request('min_price') || request('max_price'))
