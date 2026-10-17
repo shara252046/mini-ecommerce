@@ -19,6 +19,8 @@
 </head>
 <body class="bg-gray-100">
 
+
+
     <!-- =====================================================
          ROW 1: TOP BAR (Hotline + Free Delivery Info)
          ===================================================== -->
@@ -31,6 +33,8 @@
             </div>
         </div>
     </div>
+
+
 
     <!-- =====================================================
          ROW 2: MAIN NAVBAR (Logo + Search + Cart/User)
@@ -64,70 +68,115 @@
                 </form>
 
                 <!-- Right Side Icons -->
-                <div class="flex items-center gap-2 flex-shrink-0">
+<div class="flex items-center gap-3 flex-shrink-0">
+    @auth
+        @if(auth()->user()->is_admin)
+            <!-- ================= ADMIN NAVIGATION ================= -->
+            
+            <!-- Admin Dashboard Quick Link -->
+            <a href="{{ route('admin.dashboard') }}" 
+               class="hidden lg:flex items-center gap-1 text-gray-700 hover:text-green-600 font-semibold px-3 py-2">
+                <span>📊</span>
+                <span>Dashboard</span>
+            </a>
 
-                    @auth
-                        <!-- Admin Button -->
-                        @if(auth()->user()->is_admin)
-                            <a href="{{ route('admin.dashboard') }}" 
-                               class="hidden lg:flex items-center gap-2 bg-red-50 text-red-600 px-3 py-2 rounded-lg hover:bg-red-100">
-                                <span>⚙️</span>
-                                <span class="text-sm font-semibold">Admin</span>
-                            </a>
-                        @endif
-
-                        <!-- Cart with Badge -->
-                        <a href="{{ route('cart.index') }}" 
-                           class="relative bg-green-50 text-green-700 px-3 py-2 rounded-lg hover:bg-green-100 flex items-center gap-2">
-                            <span class="text-xl">🛒</span>
-                            @php $cartCount = \App\Models\Cart::where('user_id', auth()->id())->sum('quantity'); @endphp
-                            @if($cartCount > 0)
-                                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                                    {{ $cartCount }}
-                                </span>
-                            @endif
-                            <span class="text-sm font-semibold hidden lg:inline">Cart</span>
+            <!-- Admin Mega Dropdown Menu -->
+            <div class="relative group">
+                <button class="bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 flex items-center gap-2 font-semibold border border-red-200">
+                    <span>⚙️</span>
+                    <span>Admin Menu</span>
+                    <span class="text-xs">▾</span>
+                </button>
+                
+                <!-- Dropdown Content -->
+                <div class="absolute hidden group-hover:block right-0 mt-2 bg-white shadow-xl rounded-lg py-2 w-64 z-50 border border-gray-100">
+                    <div class="px-4 py-2 border-b mb-2">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Store Management</p>
+                    </div>
+                    
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
+                        <span class="text-lg">📊</span> Dashboard Overview
+                    </a>
+                    <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
+                        <span class="text-lg">📦</span> Manage Products
+                    </a>
+                    <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
+                        <span class="text-lg">📁</span> Manage Categories
+                    </a>
+                    <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
+                        <span class="text-lg">🛒</span> Manage Orders
+                    </a>
+                    <!-- Profit/Loss Report link -->
+    <a href="{{ route('admin.reports.profit-loss') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
+        <span class="text-lg">📈</span> Profit / Loss Report
+    </a>
+                    
+                    <div class="border-t mt-2 pt-2">
+                        <a href="{{ route('home') }}" target="_blank" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600">
+                            <span class="text-lg">🌐</span> View Live Website
                         </a>
-
-                        <!-- Wishlist with Badge -->
-                        <a href="{{ route('wishlist.index') }}" 
-                           class="relative bg-pink-50 text-pink-700 px-3 py-2 rounded-lg hover:bg-pink-100 flex items-center gap-2">
-                            <span class="text-xl">Wishlist❤️</span>
-                            @php $wishlistCount = \App\Models\Wishlist::where('user_id', auth()->id())->count(); @endphp
-                            @if($wishlistCount > 0)
-                                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                                    {{ $wishlistCount }}
-                                </span>
-                            @endif
-                        </a>
-
-                        <!-- User Dropdown -->
-                        <div class="relative dropdown-item">
-                            <button class="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg hover:bg-gray-200">
-                                <div class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
-                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                                </div>
-                                <span class="text-sm font-semibold hidden lg:inline">{{ auth()->user()->name }}</span>
-                                <span class="text-xs">▾</span>
-                            </button>
-                            <div class="dropdown-menu hidden absolute right-0 bg-white shadow-lg rounded-lg mt-2 py-2 w-48 z-50 border border-gray-200">
-                                <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-green-50 text-sm">👤 My Dashboard</a>
-                                <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-green-50 text-sm">📦 My Orders</a>
-                                <a href="{{ route('wishlist.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-green-50 text-sm">❤️ Wishlist</a>
-                                <hr class="my-1">
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 text-sm">🚪 Logout</button>
-                                </form>
-                            </div>
-                        </div>
-                    @else
-                        <a href="{{ route('login') }}" class="text-gray-700 hover:text-green-600 px-3 py-2 font-semibold">Login</a>
-                        <a href="{{ route('register') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-semibold">
-                            Sign Up
-                        </a>
-                    @endauth
+                    </div>
                 </div>
+            </div>
+
+        @else
+            <!-- ================= CUSTOMER NAVIGATION ================= -->
+            
+            <!-- Cart with Badge -->
+            <a href="{{ route('cart.index') }}" 
+               class="relative bg-green-50 text-green-700 px-3 py-2 rounded-lg hover:bg-green-100 flex items-center gap-2">
+                <span class="text-xl">🛒</span>
+                @php $cartCount = \App\Models\Cart::where('user_id', auth()->id())->sum('quantity'); @endphp
+                @if($cartCount > 0)
+                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                        {{ $cartCount }}
+                    </span>
+                @endif
+                <span class="text-sm font-semibold hidden lg:inline">Cart</span>
+            </a>
+
+            <!-- Wishlist -->
+            <a href="{{ route('wishlist.index') }}" 
+               class="relative bg-pink-50 text-pink-700 px-3 py-2 rounded-lg hover:bg-pink-100 flex items-center gap-2">
+                <span class="text-xl">❤️</span>
+                @php $wishlistCount = \App\Models\Wishlist::where('user_id', auth()->id())->count(); @endphp
+                @if($wishlistCount > 0)
+                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                        {{ $wishlistCount }}
+                    </span>
+                @endif
+            </a>
+        @endif
+
+        <!-- User Profile Dropdown (Everyone) -->
+        <div class="relative group">
+            <button class="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg hover:bg-gray-200">
+                <div class="w-8 h-8 {{ auth()->user()->is_admin ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-full flex items-center justify-center font-bold">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </div>
+                <span class="text-sm font-semibold hidden lg:inline">{{ auth()->user()->name }}</span>
+                <span class="text-xs">▾</span>
+            </button>
+            <div class="absolute hidden group-hover:block right-0 bg-white shadow-lg rounded-lg mt-2 py-2 w-48 z-50 border border-gray-100">
+                @if(!auth()->user()->is_admin)
+                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-green-50 text-sm">👤 My Dashboard</a>
+                    <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-green-50 text-sm">📦 My Orders</a>
+                @endif
+                <hr class="my-1">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 text-sm">🚪 Logout</button>
+                </form>
+            </div>
+        </div>
+    @else
+        <!-- Guest (Not Logged In) -->
+        <a href="{{ route('login') }}" class="text-gray-700 hover:text-green-600 px-3 py-2 font-semibold">Login</a>
+        <a href="{{ route('register') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-semibold">
+            Sign Up
+        </a>
+    @endauth
+</div>
             </div>
 
             <!-- Mobile Search Bar -->
@@ -140,76 +189,75 @@
                 </form>
             </div>
         </div>
+
+
+
 <!-- ============ CATEGORY MENU BAR (Row 3) ============ -->
-<div class="bg-gray-50 border-t border-gray-200 relative">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex items-center justify-between h-10 text-sm">
+@if(!auth()->check() || (auth()->check() && !auth()->user()->is_admin))
 
-            <!-- Left: Category Menu with Mega Dropdown -->
-            <div class="relative group">
-                <button class="font-bold text-green-700 hover:text-green-900 whitespace-nowrap flex items-center gap-2 h-10 px-2">
-                    <span>☰</span>
-                    <span>shop by CATEGORY</span>
-                    <span class="text-xs">▾</span>
-                </button>
+    <div class="bg-gray-50 border-t border-gray-200 relative">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-10 text-sm">
+                
+                <!-- Left: Category Menu with Mega Dropdown -->
+                <div class="relative group">
+                    <button class="font-bold text-green-700 hover:text-green-900 whitespace-nowrap flex items-center gap-2 h-10 px-2">
+                        <span>☰</span>
+                        <span>SHOP BY CATEGORY</span>
+                        <span class="text-xs">▾</span>
+                    </button>
 
-                <!-- Mega Menu Dropdown -->
-                @php
-                    $menuCategories = \App\Models\Category::whereNull('parent_id')
-                        ->with('subCategories')
-                        ->take(8)
-                        ->get();
-                @endphp
+                    <!-- Mega Menu Dropdown -->
+                    @php
+                        $menuCategories = \App\Models\Category::whereNull('parent_id')
+                            ->with('subCategories')
+                            ->take(8)
+                            ->get();
+                    @endphp
 
-                <div class="absolute hidden group-hover:block top-full left-0 bg-white shadow-2xl rounded-b-lg z-50 w-[900px] border border-gray-200">
-                    <div class="grid grid-cols-4 gap-4 p-6">
-                        @foreach($menuCategories as $cat)
-                            <div>
-                                <h3 class="font-bold text-green-700 text-sm mb-2 border-b pb-1 flex items-center gap-1">
-                                    {{ $cat->name }}
-                                </h3>
-                                @if($cat->subCategories->count() > 0)
-                                    <ul class="space-y-1">
-                                        @foreach($cat->subCategories as $sub)
-                                            <li>
-                                                <a href="{{ route('category.show', $sub->slug) }}" 
-                                                   class="text-xs text-gray-600 hover:text-green-600 block py-1">
-                                                    → {{ $sub->name }}
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    <p class="text-xs text-gray-400">No sub-categories</p>
-                                @endif
-                                <a href="{{ route('category.show', $cat->slug) }}" 
-                                   class="text-xs text-green-600 font-semibold mt-2 inline-block hover:underline">
-                                    View All →
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <!-- Bottom Row -->
-                    <div class="bg-green-50 border-t px-6 py-3 flex justify-between items-center">
-                        <p class="text-xs text-gray-600">🛒 Fresh groceries delivered to your doorstep</p>
-                        <a href="{{ route('home') }}" class="text-xs font-bold text-green-700 hover:underline">
-                            View All Categories →
-                        </a>
+                    <div class="absolute hidden group-hover:block top-full left-0 bg-white shadow-2xl rounded-b-lg z-50 w-[900px] border border-gray-200">
+                        <div class="grid grid-cols-4 gap-4 p-6">
+                            @foreach($menuCategories as $cat)
+                                <div>
+                                    <h3 class="font-bold text-green-700 text-sm mb-2 border-b pb-1 flex items-center gap-1">
+                                        {{ $cat->name }}
+                                    </h3>
+                                    @if($cat->subCategories->count() > 0)
+                                        <ul class="space-y-1">
+                                            @foreach($cat->subCategories as $sub)
+                                                <li>
+                                                    <a href="{{ route('category.show', $sub->slug) }}" 
+                                                       class="text-xs text-gray-600 hover:text-green-600 block py-1">
+                                                        → {{ $sub->name }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                    <a href="{{ route('category.show', $cat->slug) }}" 
+                                       class="text-xs text-green-600 font-semibold mt-2 inline-block hover:underline">
+                                        View All →
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right: Help & Support -->
-            <div class="flex items-center gap-6">
-                <a href="{{ route('help') }}" class="text-gray-700 hover:text-green-600 whitespace-nowrap flex items-center gap-1">
-                    <span>📞</span>
-                    <span>Help</span>
-                </a>
+                <!-- Right: Help -->
+                <div class="flex items-center gap-6">
+                    <a href="{{ route('help') }}" class="text-gray-700 hover:text-green-600 whitespace-nowrap flex items-center gap-1">
+                        <span>📞</span>
+                        <span>Help</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+@endif
+
+
 
     <!-- =====================================================
          SUCCESS / ERROR MESSAGES
@@ -229,12 +277,16 @@
         @endif
     </div>
 
+
+
     <!-- =====================================================
          MAIN CONTENT
          ===================================================== -->
     <main class="max-w-7xl mx-auto px-4 py-6">
         @yield('content')
     </main>
+
+
 
     <!-- =====================================================
          FOOTER
